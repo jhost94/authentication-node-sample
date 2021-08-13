@@ -16,5 +16,14 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Twitch Interactive, Inc.",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jhost94/authentication-node-sample.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/jhost94/authentication-node-sample/issues"
+  },
+  "homepage": "https://github.com/jhost94/authentication-node-sample#readme"
 }
