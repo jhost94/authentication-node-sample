@@ -20,10 +20,11 @@ var fs = require('fs');
 
 // Define our constants, you will change these with your own
 const _ENV = JSON.parse(fs.readFileSync(__dirname + "/env.json"));
+const PORT = 3000;
 const TWITCH_CLIENT_ID = _ENV.client_id;
 const TWITCH_SECRET = _ENV.client_secret;
 const SESSION_SECRET = '123';
-const CALLBACK_URL = 'http://localhost:3000/auth/twitch/callback/'; // You can run locally with - http://localhost:3000/auth/twitch/callback
+const CALLBACK_URL = `http://localhost:${PORT}/auth/twitch/callback/`; // You can run locally with - http://localhost:3000/auth/twitch/callback
 
 // Initialize Express and middlewares
 var app = express();
@@ -121,6 +122,6 @@ app.get('/', function(req, res) {
     }
 });
 
-app.listen(3000, function() {
-    console.log('Twitch auth sample listening on port 3000!')
+app.listen(PORT, function() {
+    console.log(`Twitch auth sample listening on port ${PORT}!`);
 });
