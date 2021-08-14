@@ -17,6 +17,7 @@ var OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
 var request = require('request');
 var handlebars = require('handlebars');
 var fs = require('fs');
+var twitchStrategy = require('passport-twitch').Strategy;
 
 // Define our constants, you will change these with your own
 const _ENV = JSON.parse(fs.readFileSync(__dirname + "/env.json"));
@@ -24,7 +25,7 @@ const PORT = 3000;
 const TWITCH_CLIENT_ID = _ENV.client_id;
 const TWITCH_SECRET = _ENV.client_secret;
 const SESSION_SECRET = '123';
-const CALLBACK_URL = `http://localhost:${PORT}/auth/twitch/callback/`; // You can run locally with - http://localhost:3000/auth/twitch/callback
+const CALLBACK_URL = _ENV.website + "auth/twitch/callback"; // You can run locally with - http://localhost:3000/auth/twitch/callback
 
 // Initialize Express and middlewares
 var app = express();
@@ -34,7 +35,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Override passport profile function to get user profile from Twitch API
-OAuth2Strategy.prototype.userProfile = function(accessToken, done) {
+/*OAuth2Strategy.prototype.userProfile = function(accessToken, done) {
     var options = {
         url: 'https://api.twitch.tv/helix/users',
         method: 'GET',
@@ -53,7 +54,7 @@ OAuth2Strategy.prototype.userProfile = function(accessToken, done) {
         }
     });
 }
-
+*/
 passport.serializeUser(function(user, done) {
     done(null, user);
 });
@@ -61,7 +62,7 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(user, done) {
     done(null, user);
 });
-
+/*
 passport.use('twitch', new OAuth2Strategy({
         authorizationURL: 'https://id.twitch.tv/oauth2/authorize',
         tokenURL: 'https://id.twitch.tv/oauth2/token',
@@ -79,7 +80,7 @@ passport.use('twitch', new OAuth2Strategy({
         console.log("Saving file: ", file);
         console.log(" ");
         console.log(" ");
-        //fs.writeFile(file, JSON.stringify({ oauth: accessToken }));
+        fs.writeFile(file, JSON.stringify({ oauth: accessToken }));
         // Securely store user profile in your DB
         //User.findOrCreate(..., function(err, user) {
         //  done(err, user);
@@ -88,15 +89,22 @@ passport.use('twitch', new OAuth2Strategy({
         done(null, profile);
     }
 ));
+*/
+
+passport.use(new twitchStrategy({
+        clientID: TWITCH_CLIENT_ID,
+        clientSecret: TWITCH_SECRET,
+        callbackURL: CALLBACK_URL,
+        scope: "user_read"
+    },
+    (accessToken, refreshToken, profile, done) => {
+        let filePath = __dirname + "/data.json";
+
+        console.log(accessToken);
+        fs.writeFile(filePath, accessToken);
+    }));
 
 // Set route to start OAuth link, this is where you define scopes to request
-
-/**
- *  https://localhost/?error=
- * redirect_mismatch&error_description=Parameter+redirect_uri+
- * does+not+match+registered+URI&state=4upfK955iLoi4TqFfg1u8GPG
- */
-
 app.get('/auth/twitch', passport.authenticate('twitch', { scope: 'user_read' }));
 
 // Set route for OAuth redirect

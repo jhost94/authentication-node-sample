@@ -9,6 +9,7 @@
     "handlebars": "^4.0.6",
     "passport": "^0.3.2",
     "passport-oauth": "^1.0.0",
+    "passport-twitch": "^1.0.3",
     "request": "^2.81.0"
   },
   "devDependencies": {},
